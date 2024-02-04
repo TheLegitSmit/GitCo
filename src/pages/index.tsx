@@ -28,18 +28,24 @@ export default function Chat() {
   }
 
   return (
-    <div className="p-4">
-      <div className="mb-4">
-        {messages.map((message, index) => (
-          <p key={index} className={`mb-2 ${message.role === 'assistant' ? 'text-blue-500' : 'text-green-500'}`}>
-            <strong>{message.role}:</strong> {message.content}
-          </p>
-        ))}
+    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <header style={{ fontSize: '2em', marginBottom: '1em' }}>My Chitty Chatty Bot 🤖</header>
+      <p style={{ marginBottom: '1em', textAlign: 'center' }}>This is an extremely simple, work-in-progress chatbot. Type your message and press send to interact with it.</p>
+      <p style={{ marginBottom: '1em', textAlign: 'center' }}>No transcripts are saved from the chat. Note that I want to, but I just don't know how yet lol. So no worries about privacy.</p>
+      <p style={{ marginBottom: '1em', textAlign: 'center' }}>Also, the bot doesn't yet have back-and-forth conversational memory yet because I'm still pretty bad at this. 🙃</p>
+      <div style={{ padding: '1em', backgroundColor: '#fff', borderRadius: '1em', boxShadow: '0 0 10px rgba(0,0,0,0.1)', width: '100%', maxWidth: '600px' }}>
+        <div style={{ marginBottom: '1em' }}>
+          {messages.map((message, index) => (
+            <p key={index} style={{ marginBottom: '0.5em', color: message.role === 'assistant' ? 'blue' : 'green' }}>
+              <strong>{message.role}:</strong> {message.content}
+            </p>
+          ))}
+        </div>
+        <form onSubmit={sendMessage} style={{ display: 'flex' }}>
+          <input value={input} onChange={e => setInput(e.target.value)} style={{ flexGrow: 1, marginRight: '0.5em', padding: '0.5em', border: '1px solid #ccc', borderRadius: '0.5em' }} />
+          <button type="submit" style={{ padding: '0.5em', backgroundColor: 'blue', color: 'white', borderRadius: '0.5em' }}>Send</button>
+        </form>
       </div>
-      <form onSubmit={sendMessage} className="flex">
-        <input value={input} onChange={e => setInput(e.target.value)} className="flex-grow mr-2 p-2 border rounded" />
-        <button type="submit" className="p-2 bg-blue-500 text-white rounded">Send</button>
-      </form>
     </div>
   );
 }
