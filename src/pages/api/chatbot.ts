@@ -12,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const response = await openai.chat.completions.create({
     model: 'gpt-4-0125-preview',
     messages: [
-      { role: 'system', content: 'You are a helpful assistant.' },
+      { role: 'system', content: 'You are a helpful assistant. You keep all responses to once concise sentence' },
       { role: 'user', content: message },
     ],
   });
