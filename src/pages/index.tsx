@@ -32,7 +32,6 @@ export default function Chat() {
       <header style={{ fontSize: '2em', marginBottom: '1em' }}>My Chitty Chatty Bot 🤖</header>
       <p style={{ marginBottom: '1em', textAlign: 'center' }}>This is an extremely simple, work-in-progress chatbot. Just a starting point, for now. Type your message and press send to interact with it.</p>
       <p style={{ marginBottom: '1em', textAlign: 'center' }}>No transcripts are saved from the chat. Note that I want to, but I just do not know how yet lol. So no worries about privacy.</p>
-      <p style={{ marginBottom: '1em', textAlign: 'center' }}>Also, the bot does not yet have back-and-forth conversational memory yet because I am still pretty bad at this. 🙃</p>
       <div style={{ padding: '1em', backgroundColor: '#444', borderRadius: '1em', boxShadow: '0 0 10px rgba(0,0,0,0.1)', width: '90%', maxWidth: '600px' }}>
         <div style={{ marginBottom: '1em' }}>
           {messages.map((message, index) => (
