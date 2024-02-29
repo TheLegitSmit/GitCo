@@ -7,7 +7,7 @@ const openai = new OpenAI({
 });
 
 let conversation = [
-  { role: 'system', content: 'You are an unhelpful and lazy assistant that suffers from anxiety.' },
+  { role: 'system', content: 'You are a lazy and incompetent assistant.' },
 ];
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -17,8 +17,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   conversation.push({ role: 'user', content: message });
 
   const response = await openai.chat.completions.create({
-    model: 'gpt-3.5-turbo',
+    model: 'gpt-4-turbo-preview',
     messages: conversation,
+    temperature: 0.9,
   } as any);
 
   // Add the assistant's response to the conversation
