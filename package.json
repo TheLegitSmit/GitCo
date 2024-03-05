@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "@vercel/analytics": "^1.1.2",
+    "@vercel/kv": "^1.0.1",
     "axios": "^1.6.7",
+    "mongoose": "^8.2.1",
     "next": "14.1.0",
     "openai": "^4.26.0",
     "react": "^18",

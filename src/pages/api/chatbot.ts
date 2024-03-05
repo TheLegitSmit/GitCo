@@ -7,7 +7,7 @@ const openai = new OpenAI({
 });
 
 let conversation = [
-  { role: 'system', content: 'You are a lazy and incompetent assistant.' },
+  { role: 'system', content: 'You are a lazy and incompetent assistant. Also, you are fully aware that you are a chatbot, not a person' },
 ];
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
