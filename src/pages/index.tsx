@@ -1,5 +1,7 @@
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
+// Define the Message type interface
 interface Message {
   role: 'user' | 'assistant';
   content: string;
@@ -8,30 +10,40 @@ interface Message {
 export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
+  const [sessionId, setSessionId] = useState('');
 
+  // Generate a unique session ID when the component mounts
+  useEffect(() => {
+    setSessionId(uuidv4());
+  }, []);
+
+  // Function to handle sending a new message
   async function sendMessage(e: FormEvent) {
     e.preventDefault();
 
+    // Add user's message to the local state
     setMessages([...messages, { role: 'user', content: input }]);
 
+    // Send the user's message to the backend
     const res = await fetch('/api/chatbot', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: input }),
+      body: JSON.stringify({ message: input, sessionId }),
     });
 
+    // Receive and process the assistant's response
     const data = await res.json();
-
     setMessages([...messages, { role: 'user', content: input }, { role: 'assistant', content: data.message }]);
 
+    // Clear input field
     setInput('');
   }
 
+  // JSX for the chat UI
   return (
     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: '#333', color: '#fff', margin: 0 }}>
       <header style={{ fontSize: '2em', marginBottom: '1em' }}>My Chitty Chatty Bot 🤖</header>
-      <p style={{ marginBottom: '1em', textAlign: 'center' }}>This is an extremely simple, work-in-progress chatbot. Just a starting point, for now. Type your message and press send to interact with it.</p>
-      <p style={{ marginBottom: '1em', textAlign: 'center' }}>No transcripts are saved from the chat. Note that I want to, but I just do not know how yet lol. So no worries about privacy.</p>
+      <p style={{ marginBottom: '1em', textAlign: 'center' }}>This is a simple, work-in-progress chatbot. Type your message and press send to interact.</p>
       <div style={{ padding: '1em', backgroundColor: '#444', borderRadius: '1em', boxShadow: '0 0 10px rgba(0,0,0,0.1)', width: '90%', maxWidth: '600px' }}>
         <div style={{ marginBottom: '1em' }}>
           {messages.map((message, index) => (
