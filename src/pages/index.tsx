@@ -12,19 +12,31 @@ export default function Chat() {
   async function sendMessage(e: FormEvent) {
     e.preventDefault();
 
+    if (!input.trim()) return;
+
     setMessages([...messages, { role: 'user', content: input }]);
 
-    const res = await fetch('/api/chatbot', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: input }),
-    });
+    try {
+      const res = await fetch('/api/chatbot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: input }),
+      });
 
-    const data = await res.json();
+      if (!res.ok) {
+        throw new Error('Failed to send message');
+      }
 
-    setMessages([...messages, { role: 'user', content: input }, { role: 'assistant', content: data.message }]);
+      const data = await res.json();
 
-    setInput('');
+      setMessages([...messages, { role: 'user', content: input }, { role: 'assistant', content: data.message }]);
+
+    } catch (error) {
+      console.error('Error sending message:', error);
+      setMessages([...messages, { role: 'user', content: input }, { role: 'assistant', content: 'Sorry, there was an error.' }]);
+    } finally {
+      setInput('');
+    }
   }
 
   return (
@@ -37,7 +49,7 @@ export default function Chat() {
         <div style={{ marginBottom: '1em' }}>
           {messages.map((message, index) => (
             <p key={index} style={{ marginBottom: '0.5em', color: message.role === 'assistant' ? 'lightblue' : 'lightgreen' }}>
-              <strong>{message.role}:</strong> {message.content}
+              <strong>{message.role.toUpperCase()}:</strong> {message.content}
             </p>
           ))}
         </div>
