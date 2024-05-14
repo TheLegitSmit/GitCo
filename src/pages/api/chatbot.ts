@@ -1,9 +1,23 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { OpenAI } from 'openai';
+import { GraphQLClient, gql } from 'graphql-request';
 
 const secretKey = process.env.OPENAI_API_KEY;
+const hygraphEndpoint = process.env.HYGRAPH_ENDPOINT;
+const hygraphToken = process.env.HYGRAPH_TOKEN;
+
+if (!secretKey || !hygraphEndpoint || !hygraphToken) {
+  throw new Error('Missing required environment variables');
+}
+
 const openai = new OpenAI({
   apiKey: secretKey,
+});
+
+const hygraphClient = new GraphQLClient(hygraphEndpoint, {
+  headers: {
+    authorization: `Bearer ${hygraphToken}`,
+  },
 });
 
 let conversation = [
@@ -26,5 +40,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const assistantMessage = response.choices[0].message.content as any;
   conversation.push({ role: 'assistant', content: assistantMessage });
 
-  res.status(200).json({ message: assistantMessage });
+  // Save the conversation to Hygraph
+  const saveConversationMutation = gql`
+    mutation($messages: Json!, $timestamp: DateTime!) {
+      createChatTranscript(data: { messages: $messages, timestamp: $timestamp }) {
+        id
+      }
+    }
+  `;
+
+  const timestamp = new Date().toISOString();
+
+  try {
+    await hygraphClient.request(saveConversationMutation, {
+      messages: JSON.stringify(conversation), // Ensure messages are sent as a JSON string
+      timestamp: timestamp,
+    });
+    res.status(200).json({ message: assistantMessage });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to save transcript to Hygraph' });
+  }
 }
